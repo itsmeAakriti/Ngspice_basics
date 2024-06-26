@@ -1,0 +1,25 @@
+SUBCKT_INVERTER
+.include TSMC_180nm.txt
+
+.global vdd gnd
+.param LAMBDA=0.09u
+.param width_n = 10*LAMBDA
+.param width_p=20*LAMBDA
+
+
+vdd vdd gnd 1.8v
+vin a gnd pulse 0 1.8 0ns 1ns 1ns 10ns 20ns
+
+.SUBCKT inv y x vdd gnd
+MN1 y x gnd gnd CMOSN w={width_n} L={2*LAMBDA}
+MP1 y x vdd vdd CMOSP w={width_p} L={2**LAMBDA}
+.ends inv
+
+x1 b a vdd gnd inv
+Cout b gnd 100f
+
+.tran 0.1n 200n
+.control
+run
+ plot v(b) v(a)
+.endc
